@@ -1,12 +1,30 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
+import io from "socket.io-client";
 import { useEffect, useState } from "react";
 import styles from "./page.module.css";
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
   const [programs, setPrograms] = useState<any[]>([]);
+
+  let socket;
+  const socketInitializer = async () => {
+    await fetch("/api/socket");
+
+    socket = io("https://soal-onest.vercel.app", {
+      path: "/api/socket_io",
+    });
+
+    socket.on("connect", () => {
+      console.log("Socket connected from page");
+    });
+
+    socket.on("response", (payload: any) => {
+      console.log("ccc payload in response: ", payload);
+    });
+  };
 
   useEffect(() => {
     async function getPrograms(name: string) {
@@ -35,12 +53,12 @@ export default function Home() {
         console.log(error);
       }
     }
+    socketInitializer();
     getPrograms("Javascript");
   }, []);
 
   return (
     <main className={styles.main}>
-      {/* <h1 className={styles.description}>SOAL ONEST Landing page</h1> */}
       {loading ? (
         <p>Loading...</p>
       ) : programs.length ? (

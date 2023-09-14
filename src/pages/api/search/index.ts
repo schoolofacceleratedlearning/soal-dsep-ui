@@ -4,7 +4,7 @@ export default async function search(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const reqBody = JSON.parse(req.body);
+  const transaction = Date.now() + " - soal-bap";
   var raw = JSON.stringify({
     context: {
       domain: "dsep:courses",
@@ -22,23 +22,23 @@ export default async function search(
           code: "IND",
         },
       },
-      transaction_id: "a9aaecca-10b7-4d19-b640-b047a7c62196",
-      message_id: "0d30bfbf-87b8-43d2-8f95-36ebb9a24fd6",
-      ttl: "PT20S",
-      timestamp: "2023-02-15T15:14:30.560Z",
+      transaction_id: transaction,
+      message_id: transaction,
+      ttl: "PT10M",
+      timestamp: new Date(Date.now()),
     },
     message: {
       intent: {
         item: {
           descriptor: {
-            name: reqBody.name,
+            name: "",
           },
         },
       },
     },
   });
 
-  const response = await fetch("https://soal-bap.vercel.app", {
+  const response = await fetch("https://gateway.becknprotocol.io/bg/search", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
